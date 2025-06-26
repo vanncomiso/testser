@@ -1,8 +1,8 @@
 "use client"
 
 import * as React from "react"
-import { useState } from "react"
-import { XIcon, PlusIcon, LoaderIcon } from "lucide-react"
+import { useState, useEffect } from "react"
+import { XIcon, LoaderIcon } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -32,12 +32,53 @@ export function CreateDataModal({ isOpen, onClose, onSubmit, defaultType = 'cont
   const [tagInput, setTagInput] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  // Update form type when defaultType changes and reset form
+  useEffect(() => {
+    if (isOpen) {
+      setFormData({
+        title: '',
+        description: '',
+        content: '',
+        type: defaultType,
+        tags: [],
+        metadata: {}
+      })
+      setTagInput('')
+    }
+  }, [defaultType, isOpen])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     if (!formData.title.trim()) {
       toast.error('Please enter a title')
       return
+    }
+
+    // Type-specific validation
+    if (formData.type === 'product') {
+      if (!formData.metadata.price) {
+        toast.error('Please enter a price for the product')
+        return
+      }
+    }
+
+    if (formData.type === 'inquiry') {
+      if (!formData.description.trim()) {
+        toast.error('Please enter a description for the inquiry')
+        return
+      }
+    }
+
+    if (formData.type === 'issue') {
+      if (!formData.metadata.severity) {
+        toast.error('Please select a severity level')
+        return
+      }
+      if (!formData.metadata.status) {
+        toast.error('Please select a status')
+        return
+      }
     }
 
     setIsSubmitting(true)
@@ -86,10 +127,177 @@ export function CreateDataModal({ isOpen, onClose, onSubmit, defaultType = 'cont
     }
   }
 
-  // Update form type when defaultType changes
-  React.useEffect(() => {
-    setFormData(prev => ({ ...prev, type: defaultType }))
-  }, [defaultType])
+  const updateMetadata = (key: string, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      metadata: {
+        ...prev.metadata,
+        [key]: value
+      }
+    }))
+  }
+
+  const getTypeDisplayName = () => {
+    const typeConfig = DATA_TYPES.find(t => t.id === formData.type)
+    return typeConfig?.name || 'Data'
+  }
+
+  const renderTypeSpecificFields = () => {
+    switch (formData.type) {
+      case 'product':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="price" className="text-sidebar-foreground font-medium">
+                Price *
+              </Label>
+              <Input
+                id="price"
+                type="number"
+                step="0.01"
+                value={formData.metadata.price || ''}
+                onChange={(e) => updateMetadata('price', parseFloat(e.target.value) || '')}
+                placeholder="0.00"
+                className="bg-sidebar-accent border-sidebar-border text-sidebar-foreground placeholder:text-sidebar-foreground/50"
+                disabled={isSubmitting}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="affiliate-link" className="text-sidebar-foreground font-medium">
+                Affiliate Link
+              </Label>
+              <Input
+                id="affiliate-link"
+                type="url"
+                value={formData.metadata.affiliateLink || ''}
+                onChange={(e) => updateMetadata('affiliateLink', e.target.value)}
+                placeholder="https://example.com/product"
+                className="bg-sidebar-accent border-sidebar-border text-sidebar-foreground placeholder:text-sidebar-foreground/50"
+                disabled={isSubmitting}
+              />
+            </div>
+          </>
+        )
+
+      case 'issue':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="severity" className="text-sidebar-foreground font-medium">
+                Severity *
+              </Label>
+              <Select 
+                value={formData.metadata.severity || ''} 
+                onValueChange={(value) => updateMetadata('severity', value)}
+                disabled={isSubmitting}
+              >
+                <SelectTrigger className="bg-sidebar-accent border-sidebar-border text-sidebar-foreground">
+                  <SelectValue placeholder="Select severity" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="low">Low</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="high">High</SelectItem>
+                  <SelectItem value="critical">Critical</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="status" className="text-sidebar-foreground font-medium">
+                Status *
+              </Label>
+              <Select 
+                value={formData.metadata.status || ''} 
+                onValueChange={(value) => updateMetadata('status', value)}
+                disabled={isSubmitting}
+              >
+                <SelectTrigger className="bg-sidebar-accent border-sidebar-border text-sidebar-foreground">
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="open">Open</SelectItem>
+                  <SelectItem value="in-progress">In Progress</SelectItem>
+                  <SelectItem value="resolved">Resolved</SelectItem>
+                  <SelectItem value="closed">Closed</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Tags for issues */}
+            <div className="space-y-2">
+              <Label htmlFor="tags" className="text-sidebar-foreground font-medium">
+                Tags
+              </Label>
+              <div className="flex gap-2">
+                <Input
+                  id="tags"
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Add tags..."
+                  className="flex-1 bg-sidebar-accent border-sidebar-border text-sidebar-foreground placeholder:text-sidebar-foreground/50"
+                  disabled={isSubmitting}
+                />
+                <Button
+                  type="button"
+                  onClick={addTag}
+                  variant="outline"
+                  className="bg-sidebar-accent border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent/80"
+                  disabled={isSubmitting}
+                >
+                  Add
+                </Button>
+              </div>
+              {formData.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {formData.tags.map((tag, index) => (
+                    <Badge
+                      key={index}
+                      variant="outline"
+                      className="bg-sidebar-foreground/10 text-sidebar-foreground border-sidebar-foreground/20 cursor-pointer hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/20 transition-colors"
+                      onClick={() => removeTag(tag)}
+                    >
+                      {tag} ×
+                    </Badge>
+                  ))}
+                </div>
+              )}
+            </div>
+          </>
+        )
+
+      default:
+        return null
+    }
+  }
+
+  const getTitleLabel = () => {
+    switch (formData.type) {
+      case 'product':
+        return 'Product Name *'
+      case 'inquiry':
+        return 'Question *'
+      case 'issue':
+        return 'Issue Title *'
+      default:
+        return 'Title *'
+    }
+  }
+
+  const getTitlePlaceholder = () => {
+    switch (formData.type) {
+      case 'product':
+        return 'Enter the product name'
+      case 'inquiry':
+        return 'What is your question?'
+      case 'issue':
+        return 'Brief description of the issue'
+      default:
+        return 'Enter a descriptive title'
+    }
+  }
 
   if (!isOpen) return null
 
@@ -98,7 +306,7 @@ export function CreateDataModal({ isOpen, onClose, onSubmit, defaultType = 'cont
       <div className="bg-sidebar border border-sidebar-border rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-sidebar-border">
-          <h2 className="text-xl font-semibold text-sidebar-foreground">Add New Data</h2>
+          <h2 className="text-xl font-semibold text-sidebar-foreground">Add New {getTypeDisplayName()}</h2>
           <Button
             variant="ghost"
             size="icon"
@@ -114,117 +322,60 @@ export function CreateDataModal({ isOpen, onClose, onSubmit, defaultType = 'cont
           {/* Title */}
           <div className="space-y-2">
             <Label htmlFor="title" className="text-sidebar-foreground font-medium">
-              Title *
+              {getTitleLabel()}
             </Label>
             <Input
               id="title"
               value={formData.title}
               onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-              placeholder="Enter a descriptive title"
+              placeholder={getTitlePlaceholder()}
               className="bg-sidebar-accent border-sidebar-border text-sidebar-foreground placeholder:text-sidebar-foreground/50"
               disabled={isSubmitting}
             />
           </div>
 
-          {/* Type */}
-          <div className="space-y-2">
-            <Label htmlFor="type" className="text-sidebar-foreground font-medium">
-              Type *
-            </Label>
-            <Select 
-              value={formData.type} 
-              onValueChange={(value: DataType) => setFormData(prev => ({ ...prev, type: value }))}
-              disabled={isSubmitting}
-            >
-              <SelectTrigger className="bg-sidebar-accent border-sidebar-border text-sidebar-foreground">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {DATA_TYPES.map((type) => (
-                  <SelectItem key={type.id} value={type.id}>
-                    <div className="flex items-center gap-2">
-                      <type.icon className="h-4 w-4" />
-                      <div>
-                        <div className="font-medium">{type.name}</div>
-                        <div className="text-xs text-muted-foreground">{type.description}</div>
-                      </div>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          {/* Type-specific fields */}
+          {renderTypeSpecificFields()}
 
           {/* Description */}
           <div className="space-y-2">
             <Label htmlFor="description" className="text-sidebar-foreground font-medium">
-              Description
+              Description {formData.type === 'inquiry' ? '*' : ''}
             </Label>
             <Textarea
               id="description"
               value={formData.description}
               onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              placeholder="Brief description of this data"
+              placeholder={
+                formData.type === 'inquiry' 
+                  ? 'Provide more details about your question'
+                  : formData.type === 'issue'
+                  ? 'Detailed description of the issue'
+                  : formData.type === 'product'
+                  ? 'Product description and features'
+                  : 'Brief description of this data'
+              }
               className="min-h-[80px] bg-sidebar-accent border-sidebar-border text-sidebar-foreground placeholder:text-sidebar-foreground/50 resize-none"
               disabled={isSubmitting}
             />
           </div>
 
-          {/* Content */}
-          <div className="space-y-2">
-            <Label htmlFor="content" className="text-sidebar-foreground font-medium">
-              Content
-            </Label>
-            <Textarea
-              id="content"
-              value={formData.content}
-              onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
-              placeholder="Detailed content or information"
-              className="min-h-[120px] bg-sidebar-accent border-sidebar-border text-sidebar-foreground placeholder:text-sidebar-foreground/50 resize-none"
-              disabled={isSubmitting}
-            />
-          </div>
-
-          {/* Tags */}
-          <div className="space-y-2">
-            <Label htmlFor="tags" className="text-sidebar-foreground font-medium">
-              Tags
-            </Label>
-            <div className="flex gap-2">
-              <Input
-                id="tags"
-                value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Add tags..."
-                className="flex-1 bg-sidebar-accent border-sidebar-border text-sidebar-foreground placeholder:text-sidebar-foreground/50"
+          {/* Content field for context type only */}
+          {formData.type === 'context' && (
+            <div className="space-y-2">
+              <Label htmlFor="content" className="text-sidebar-foreground font-medium">
+                Content
+              </Label>
+              <Textarea
+                id="content"
+                value={formData.content}
+                onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+                placeholder="Detailed content or information"
+                className="min-h-[120px] bg-sidebar-accent border-sidebar-border text-sidebar-foreground placeholder:text-sidebar-foreground/50 resize-none"
                 disabled={isSubmitting}
               />
-              <Button
-                type="button"
-                onClick={addTag}
-                variant="outline"
-                className="bg-sidebar-accent border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent/80"
-                disabled={isSubmitting}
-              >
-                <PlusIcon className="h-4 w-4" />
-              </Button>
             </div>
-            {formData.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-2">
-                {formData.tags.map((tag, index) => (
-                  <Badge
-                    key={index}
-                    variant="outline"
-                    className="bg-sidebar-foreground/10 text-sidebar-foreground border-sidebar-foreground/20 cursor-pointer hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/20 transition-colors"
-                    onClick={() => removeTag(tag)}
-                  >
-                    {tag} ×
-                  </Badge>
-                ))}
-              </div>
-            )}
-          </div>
+          )}
         </form>
 
         {/* Footer */}
@@ -249,7 +400,7 @@ export function CreateDataModal({ isOpen, onClose, onSubmit, defaultType = 'cont
                 Creating...
               </>
             ) : (
-              'Create Data'
+              `Create ${getTypeDisplayName()}`
             )}
           </Button>
         </div>

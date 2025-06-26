@@ -111,6 +111,7 @@ export function KnowledgeBase() {
                 hasFilters={hasFilters}
                 onClearFilters={handleClearFilters}
                 onCreateData={() => setIsCreateModalOpen(true)}
+                currentType={getFilterDisplayName(filters.type)}
               />
             )}
           </div>

@@ -9,9 +9,10 @@ interface EmptyStateProps {
   hasFilters: boolean
   onClearFilters: () => void
   onCreateData: () => void
+  currentType: string
 }
 
-export function EmptyState({ hasFilters, onClearFilters, onCreateData }: EmptyStateProps) {
+export function EmptyState({ hasFilters, onClearFilters, onCreateData, currentType }: EmptyStateProps) {
   if (hasFilters) {
     return (
       <div className="text-center py-12">
@@ -28,7 +29,7 @@ export function EmptyState({ hasFilters, onClearFilters, onCreateData }: EmptySt
             className="bg-sidebar-foreground text-sidebar hover:bg-sidebar-foreground/90"
           >
             Clear Filters
-          </Button>
+            Add {currentType}
         </Card>
       </div>
     )
