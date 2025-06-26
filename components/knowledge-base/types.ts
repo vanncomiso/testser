@@ -19,7 +19,7 @@ export type DataType = 'context' | 'issue' | 'inquiry' | 'product'
 
 export interface FilterState {
   search: string
-  type: DataType | 'all'
+  type: DataType
   sortBy: 'newest' | 'oldest' | 'title'
 }
 

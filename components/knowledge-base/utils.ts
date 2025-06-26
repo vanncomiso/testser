@@ -47,9 +47,7 @@ export const filterAndSortData = (data: DataItem[], filters: FilterState): DataI
   }
 
   // Apply type filter
-  if (filters.type !== 'all') {
-    filtered = filtered.filter(item => item.type === filters.type)
-  }
+  filtered = filtered.filter(item => item.type === filters.type)
 
   // Apply sorting
   filtered.sort((a, b) => {

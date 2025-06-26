@@ -40,18 +40,6 @@ export function SearchAndFilters({ filters, onFiltersChange, resultCount }: Sear
         </Button>
         
         <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto">
-          <Button
-            variant={filters.type === 'all' ? "default" : "ghost"}
-            size="sm"
-            onClick={() => onFiltersChange({ ...filters, type: 'all' })}
-            className={`whitespace-nowrap flex-shrink-0 text-xs sm:text-sm ${
-              filters.type === 'all'
-                ? "bg-sidebar-foreground text-sidebar hover:bg-sidebar-foreground/90"
-                : "text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent"
-            }`}
-          >
-            All
-          </Button>
           {DATA_TYPES.map((type) => (
             <Button
               key={type.id}

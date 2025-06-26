@@ -18,13 +18,25 @@ export function KnowledgeBase() {
   const { data, loading, createData } = useData()
   const [filters, setFilters] = useState<FilterState>({
     search: '',
-    type: 'all',
+    type: 'context',
     sortBy: 'newest'
   })
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
   const filteredData = filterAndSortData(data, filters)
-  const hasFilters = filters.search !== '' || filters.type !== 'all'
+  const hasFilters = filters.search !== ''
+
+  // Get the display name for the current filter type
+  const getFilterDisplayName = (type: DataType) => {
+    const typeConfig = DATA_TYPES.find(t => t.id === type)
+    return typeConfig?.name || 'Data'
+  }
+
+  // Get the button text based on current filter
+  const getAddButtonText = () => {
+    const displayName = getFilterDisplayName(filters.type)
+    return `Add ${displayName}`
+  }
 
   const handleCreateData = async (formData: CreateDataFormData) => {
     // Use the first project if available, or create a default project ID
@@ -39,7 +51,7 @@ export function KnowledgeBase() {
   const handleClearFilters = () => {
     setFilters({
       search: '',
-      type: 'all',
+      type: 'context',
       sortBy: 'newest'
     })
   }
@@ -75,7 +87,7 @@ export function KnowledgeBase() {
                 className="bg-sidebar-foreground text-sidebar hover:bg-sidebar-foreground/90 w-full sm:w-auto"
               >
                 <PlusIcon className="h-4 w-4 mr-2" />
-                Add Data
+                {getAddButtonText()}
               </Button>
             </div>
 
