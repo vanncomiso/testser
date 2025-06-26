@@ -58,3 +58,6 @@ export function EmptyState({ hasFilters, onClearFilters, onCreateData, currentTy
     </div>
   )
 }
+    )
+  }
+}
