@@ -12,6 +12,7 @@ import { CreateDataModal } from './knowledge-base/create-data-modal'
 import { EmptyState } from './knowledge-base/empty-state'
 import { filterAndSortData } from './knowledge-base/utils'
 import { FilterState, CreateDataFormData } from './knowledge-base/types'
+import { DATA_TYPES } from './knowledge-base/constants'
 
 export function KnowledgeBase() {
   const { projects } = useProjects()
