@@ -121,6 +121,7 @@ export function KnowledgeBase() {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreateData}
+        defaultType={filters.type}
       />
     </div>
   )

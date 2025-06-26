@@ -17,14 +17,15 @@ interface CreateDataModalProps {
   isOpen: boolean
   onClose: () => void
   onSubmit: (data: CreateDataFormData) => Promise<void>
+  defaultType?: DataType
 }
 
-export function CreateDataModal({ isOpen, onClose, onSubmit }: CreateDataModalProps) {
+export function CreateDataModal({ isOpen, onClose, onSubmit, defaultType = 'context' }: CreateDataModalProps) {
   const [formData, setFormData] = useState<CreateDataFormData>({
     title: '',
     description: '',
     content: '',
-    type: 'context',
+    type: defaultType,
     tags: [],
     metadata: {}
   })
@@ -47,7 +48,7 @@ export function CreateDataModal({ isOpen, onClose, onSubmit }: CreateDataModalPr
         title: '',
         description: '',
         content: '',
-        type: 'context',
+        type: defaultType,
         tags: [],
         metadata: {}
       })
@@ -84,6 +85,11 @@ export function CreateDataModal({ isOpen, onClose, onSubmit }: CreateDataModalPr
       addTag()
     }
   }
+
+  // Update form type when defaultType changes
+  React.useEffect(() => {
+    setFormData(prev => ({ ...prev, type: defaultType }))
+  }, [defaultType])
 
   if (!isOpen) return null
 
