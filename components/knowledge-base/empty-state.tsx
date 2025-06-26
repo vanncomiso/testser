@@ -29,7 +29,7 @@ export function EmptyState({ hasFilters, onClearFilters, onCreateData, currentTy
             className="bg-sidebar-foreground text-sidebar hover:bg-sidebar-foreground/90"
           >
             Clear Filters
-            Add {currentType}
+          </Button>
         </Card>
       </div>
     )
@@ -57,7 +57,4 @@ export function EmptyState({ hasFilters, onClearFilters, onCreateData, currentTy
       </Card>
     </div>
   )
-}
-    )
-  }
 }
