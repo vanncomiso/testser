@@ -402,7 +402,7 @@ const LandingPage = () => {
       </div>
 
       {/* Hero */}
-      <div className="relative h-dvh w-screen overflow-hidden">
+      <div className="relative h-dvh w-screen overflow-hidden bg-black">
         <div
           id="video-frame"
           className="relative z-10 h-dvh w-screen overflow-hidden rounded-3xl bg-gray-900"
@@ -417,7 +417,7 @@ const LandingPage = () => {
           {/* Dark overlay */}
           <div className="absolute left-0 top-0 size-full bg-black/40"></div>
 
-          <h1 className="special-font hero-heading absolute bottom-5 right-5 z-40 text-gray-600">
+          <h1 className="special-font hero-heading absolute bottom-5 right-5 z-40 text-white">
             G<b>A</b>MING
           </h1>
 
@@ -441,7 +441,7 @@ const LandingPage = () => {
           </div>
         </div>
 
-        <h1 className="special-font hero-heading absolute bottom-5 right-5 text-black">
+        <h1 className="special-font hero-heading absolute bottom-5 right-5 text-white">
           G<b>A</b>MING
         </h1>
       </div>
