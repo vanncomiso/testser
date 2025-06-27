@@ -103,6 +103,9 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      transitionTimingFunction: {
+        'nav-hover': 'cubic-bezier(0.65, 0.05, 0.36, 1)',
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
