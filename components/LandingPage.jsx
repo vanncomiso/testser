@@ -402,7 +402,7 @@ const LandingPage = () => {
       </div>
 
       {/* Hero */}
-      <div className="relative h-dvh w-screen overflow-hidden bg-black">
+      <div className="relative h-dvh w-screen overflow-hidden bg-white">
         <div
           id="video-frame"
           className="relative z-10 h-dvh w-screen overflow-hidden rounded-3xl bg-gray-900"
@@ -441,7 +441,7 @@ const LandingPage = () => {
           </div>
         </div>
 
-        <h1 className="special-font hero-heading absolute bottom-5 right-5 text-white">
+        <h1 className="special-font hero-heading absolute bottom-5 right-5 text-black">
           G<b>A</b>MING
         </h1>
       </div>
