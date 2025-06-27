@@ -124,7 +124,7 @@ const BentoTilt = ({ children, className = "" }) => {
 };
 
 // BentoCard Component
-const BentoCard = ({ src, title, description, isComingSoon }) => {
+const BentoCard = ({ src, title, description, isComingSoon, isVideo = false }) => {
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [hoverOpacity, setHoverOpacity] = useState(0);
   const hoverButtonRef = useRef(null);
@@ -144,13 +144,21 @@ const BentoCard = ({ src, title, description, isComingSoon }) => {
 
   return (
     <div className="relative size-full">
-      <video
-        src={src}
-        loop
-        muted
-        autoPlay
-        className="absolute left-0 top-0 size-full object-cover object-center"
-      />
+      {isVideo ? (
+        <video
+          src={src}
+          loop
+          muted
+          autoPlay
+          className="absolute left-0 top-0 size-full object-cover object-center"
+        />
+      ) : (
+        <img
+          src={src}
+          alt={title}
+          className="absolute left-0 top-0 size-full object-cover object-center"
+        />
+      )}
       <div className="relative z-10 flex size-full flex-col justify-between p-5 text-blue-50">
         <div>
           <h1 className="bento-title special-font">{title}</h1>
@@ -340,7 +348,9 @@ const LandingPage = () => {
         <header className="absolute top-1/2 w-full -translate-y-1/2">
           <nav className="flex size-full items-center justify-between p-4">
             <div className="flex items-center gap-7">
-              <img src="/img/logo.png" alt="logo" className="w-10" />
+              <div className="w-10 h-10 bg-gradient-to-br from-violet-300 to-blue-300 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-lg">Z</span>
+              </div>
               <Button
                 id="product-button"
                 title="Products"
@@ -445,7 +455,7 @@ const LandingPage = () => {
         <div className="h-dvh w-screen relative" id="clip">
           <div className="mask-clip-path about-image">
             <img
-              src="img/about.webp"
+              src="https://images.pexels.com/photos/3184639/pexels-photo-3184639.jpeg?auto=compress&cs=tinysrgb&w=1200&h=800&fit=crop"
               alt="Background"
               className="absolute left-0 top-0 size-full object-cover"
             />
@@ -469,7 +479,7 @@ const LandingPage = () => {
 
           <BentoTilt className="border-hsla relative mb-7 h-96 w-full overflow-hidden rounded-md md:h-[65vh]">
             <BentoCard
-              src="videos/feature-1.mp4"
+              src="https://images.pexels.com/photos/2047905/pexels-photo-2047905.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop"
               title={
                 <>
                   radia<b>n</b>t
@@ -483,7 +493,7 @@ const LandingPage = () => {
           <div className="grid h-[135vh] w-full grid-cols-2 grid-rows-3 gap-7">
             <BentoTilt className="bento-tilt_1 row-span-1 md:col-span-1 md:row-span-2">
               <BentoCard
-                src="videos/feature-2.mp4"
+                src="https://images.pexels.com/photos/3165335/pexels-photo-3165335.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop"
                 title={
                   <>
                     zig<b>m</b>a
@@ -496,7 +506,7 @@ const LandingPage = () => {
 
             <BentoTilt className="bento-tilt_1 row-span-1 ms-32 md:col-span-1 md:ms-0">
               <BentoCard
-                src="videos/feature-3.mp4"
+                src="https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop"
                 title={
                   <>
                     n<b>e</b>xus
@@ -509,7 +519,7 @@ const LandingPage = () => {
 
             <BentoTilt className="bento-tilt_1 me-14 md:col-span-1 md:me-0">
               <BentoCard
-                src="videos/feature-4.mp4"
+                src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop"
                 title={
                   <>
                     az<b>u</b>l
@@ -531,11 +541,9 @@ const LandingPage = () => {
             </BentoTilt>
 
             <BentoTilt className="bento-tilt_2">
-              <video
-                src="videos/feature-5.mp4"
-                loop
-                muted
-                autoPlay
+              <img
+                src="https://images.pexels.com/photos/3184338/pexels-photo-3184338.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop"
+                alt="Feature 5"
                 className="size-full object-cover object-center"
               />
             </BentoTilt>
@@ -565,8 +573,8 @@ const LandingPage = () => {
                     onMouseLeave={handleMouseLeave}
                     onMouseUp={handleMouseLeave}
                     onMouseEnter={handleMouseLeave}
-                    src="/img/entrance.webp"
-                    alt="entrance.webp"
+                    src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1200&h=800&fit=crop"
+                    alt="entrance"
                     className="object-contain"
                   />
                 </div>
