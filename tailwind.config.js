@@ -2,10 +2,11 @@
 export default {
   darkMode: ["class"],
   content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
     './pages/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
   ],
   prefix: "",
   theme: {
@@ -17,7 +18,26 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        anton: ["Anton", "sans-serif"],
+        general: ["Inter", "sans-serif"],
+        "circular-web": ["Space Grotesk", "sans-serif"],
+      },
       colors: {
+        blue: {
+          50: "#DFDFF0",
+          75: "#dfdff2",
+          100: "#F0F2FA",
+          200: "#010101",
+          300: "#4FB7DD",
+        },
+        violet: {
+          300: "#5724ff",
+        },
+        yellow: {
+          100: "#8e983f",
+          300: "#edff66",
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
