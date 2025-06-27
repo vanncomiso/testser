@@ -191,13 +191,6 @@ const BentoCard = ({ src, title, description, isComingSoon, isVideo = false }) =
   );
 };
 
-// ImageClipBox Component
-const ImageClipBox = ({ src, clipClass }) => (
-  <div className={clipClass}>
-    <img src={src} />
-  </div>
-);
-
 // Main Landing Page Component
 const LandingPage = () => {
   // NavBar state
@@ -208,9 +201,6 @@ const LandingPage = () => {
   const { y: currentScrollY } = useWindowScroll();
   const [isNavVisible, setIsNavVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
-
-  // Hero state
-  const [currentIndex, setCurrentIndex] = useState(1);
 
   // Story state
   const frameRef = useRef(null);
@@ -270,34 +260,46 @@ const LandingPage = () => {
 
   // Effects
   useEffect(() => {
-    if (isAudioPlaying) {
-      audioElementRef.current.play();
-    } else {
-      audioElementRef.current.pause();
+    if (audioElementRef.current) {
+      if (isAudioPlaying) {
+        audioElementRef.current.play().catch(() => {
+          // Handle autoplay restrictions
+        });
+      } else {
+        audioElementRef.current.pause();
+      }
     }
   }, [isAudioPlaying]);
 
   useEffect(() => {
     if (currentScrollY === 0) {
       setIsNavVisible(true);
-      navContainerRef.current.classList.remove("floating-nav");
+      if (navContainerRef.current) {
+        navContainerRef.current.classList.remove("floating-nav");
+      }
     } else if (currentScrollY > lastScrollY) {
       setIsNavVisible(false);
-      navContainerRef.current.classList.add("floating-nav");
+      if (navContainerRef.current) {
+        navContainerRef.current.classList.add("floating-nav");
+      }
     } else if (currentScrollY < lastScrollY) {
       setIsNavVisible(true);
-      navContainerRef.current.classList.add("floating-nav");
+      if (navContainerRef.current) {
+        navContainerRef.current.classList.add("floating-nav");
+      }
     }
 
     setLastScrollY(currentScrollY);
   }, [currentScrollY, lastScrollY]);
 
   useEffect(() => {
-    gsap.to(navContainerRef.current, {
-      y: isNavVisible ? 0 : -100,
-      opacity: isNavVisible ? 1 : 0,
-      duration: 0.2,
-    });
+    if (navContainerRef.current) {
+      gsap.to(navContainerRef.current, {
+        y: isNavVisible ? 0 : -100,
+        opacity: isNavVisible ? 1 : 0,
+        duration: 0.2,
+      });
+    }
   }, [isNavVisible]);
 
   // GSAP Animations
@@ -339,7 +341,7 @@ const LandingPage = () => {
   });
 
   return (
-    <main className="relative min-h-screen w-screen overflow-x-hidden">
+    <main className="relative min-h-screen w-screen overflow-x-hidden bg-black">
       {/* NavBar */}
       <div
         ref={navContainerRef}
@@ -400,14 +402,20 @@ const LandingPage = () => {
       </div>
 
       {/* Hero */}
-      <div className="relative h-dvh w-screen">
-
+      <div className="relative h-dvh w-screen overflow-hidden">
         <div
           id="video-frame"
           className="relative z-10 h-dvh w-screen overflow-hidden rounded-3xl bg-gray-900"
         >
-          {/* Static dark background */}
-          <div className="absolute left-0 top-0 size-full bg-gradient-to-br from-gray-900 via-gray-800 to-black"></div>
+          {/* Background Image */}
+          <img
+            src="https://images.pexels.com/photos/3861458/pexels-photo-3861458.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop"
+            alt="Gaming Background"
+            className="absolute left-0 top-0 size-full object-cover"
+          />
+          
+          {/* Dark overlay */}
+          <div className="absolute left-0 top-0 size-full bg-black/40"></div>
 
           <h1 className="special-font hero-heading absolute bottom-5 right-5 z-40 text-gray-600">
             G<b>A</b>MING
@@ -439,9 +447,9 @@ const LandingPage = () => {
       </div>
 
       {/* About */}
-      <div id="about" className="min-h-screen w-screen overflow-hidden">
+      <div id="about" className="min-h-screen w-screen overflow-hidden bg-white">
         <div className="relative mb-8 mt-36 flex flex-col items-center gap-5">
-          <p className="font-anton text-sm uppercase md:text-[10px]">
+          <p className="font-anton text-sm uppercase md:text-[10px] text-black">
             Welcome to Zentry
           </p>
 
@@ -449,7 +457,6 @@ const LandingPage = () => {
             title="Disc<b>o</b>ver the world's <br /> largest shared <b>a</b>dventure"
             containerClass="mt-5 !text-black text-center px-4"
           />
-
         </div>
 
         <div className="h-dvh w-screen relative" id="clip">
@@ -575,7 +582,7 @@ const LandingPage = () => {
                     onMouseEnter={handleMouseLeave}
                     src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1200&h=800&fit=crop"
                     alt="entrance"
-                    className="object-contain"
+                    className="object-contain w-full h-full"
                   />
                 </div>
               </div>
@@ -659,5 +666,4 @@ const LandingPage = () => {
   );
 };
 
-
-export default LandingPage
+export default LandingPage;

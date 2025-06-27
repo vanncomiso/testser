@@ -4,8 +4,8 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
     './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
   ],
   prefix: "",
@@ -32,7 +32,9 @@ export default {
           300: "#4FB7DD",
         },
         violet: {
+          50: "#f3f0ff",
           300: "#5724ff",
+          400: "#4c1d95",
         },
         yellow: {
           100: "#8e983f",
